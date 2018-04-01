@@ -12,6 +12,9 @@ WORKDIR /app
 # Compile
 RUN cargo build --release
 
+# Built docs will go there
+VOLUME /docs
+
 # Setup environnement and run
 #
 # You may want to edit these values

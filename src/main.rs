@@ -23,14 +23,14 @@ extern crate rocket;
 extern crate rocket_contrib;
 #[macro_use]
 extern crate lazy_static;
+extern crate regex;
 
 use std::collections::HashMap;
 use std::env;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::{self, Command};
 
-use rocket::request::Form;
-use rocket::response::{NamedFile, Redirect};
+use regex::Regex;
 use rocket_contrib::Json;
 
 // The different environment variables we are using.
@@ -38,7 +38,7 @@ use rocket_contrib::Json;
 // The idea here is to check at boot-time if the variable is set and not every time we
 // need it.
 lazy_static! {
-    pub static ref RAVEN_DOCS_TOKEN: String = {
+    static ref RAVEN_DOCS_TOKEN: String = {
         match env::var("RAVEN_DOCS_TOKEN") {
             Ok(s) => s,
             Err(_) => {
@@ -47,7 +47,7 @@ lazy_static! {
             }
         }
     };
-    pub static ref RAVEN_DOCS_PATH: String = {
+    static ref RAVEN_DOCS_PATH: String = {
         match env::var("RAVEN_DOCS_PATH") {
             Ok(s) => s,
             Err(_) => {
@@ -56,55 +56,38 @@ lazy_static! {
             }
         }
     };
-}
-
-#[derive(FromForm)]
-struct Token {
-    token: String,
+    static ref REGEX_PROJECT_NAME: Regex = Regex::new(r"^[a-z0-9\-_]+$").unwrap();
 }
 
 /// Pulls and updates the given project
-#[post("/pull/<project..>", data = "<datas>")]
+#[get("/<project>/<token>")]
 #[cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
-fn pull(project: PathBuf, datas: Form<Token>) -> Json<HashMap<String, String>> {
+fn pull(project: String, token: String) -> Json<HashMap<&'static str, &'static str>> {
     let status = {
-        if datas.get().token == *RAVEN_DOCS_TOKEN {
-            let p = Path::new("pull").join(project).with_extension("sh");
+        if token == *RAVEN_DOCS_TOKEN && REGEX_PROJECT_NAME.is_match(&project) {
+            let p = Path::new("scripts/project/")
+                .join(project)
+                .with_extension("sh");
             if p.exists() {
-                match Command::new(p).env_remove("RAVEN_DOCS_TOKEN").spawn() {
-                    Ok(_) => Ok(()),
-                    Err(_) => Err("failed to start"),
-                }
+                Command::new(p)
+                    .env_remove("RAVEN_DOCS_TOKEN")
+                    .spawn()
+                    .is_ok()
             } else {
-                Err("bad project")
+                false
             }
         } else {
-            Err("bad token")
+            false
         }
     };
-    let result = match status {
-        Ok(_) => vec![(String::from("status"), String::from("success"))],
-        Err(s) => vec![
-            (String::from("status"), String::from("fail")),
-            (String::from("data"), String::from(s)),
-        ],
-    };
-    Json(result.iter().cloned().collect())
-}
-
-/// Serve documentation files
-#[get("/<target..>")]
-fn files(mut target: PathBuf) -> Result<Option<NamedFile>, Redirect> {
-    let path = Path::new(&(*RAVEN_DOCS_PATH)).join(target.clone());
-    if path.is_dir() {
-        target.push("index.html");
-        if let Some(path) = target.to_str() {
-            Err(Redirect::to(path))
-        } else {
-            Err(Redirect::to("/"))
-        }
+    if status {
+        let mut hm = HashMap::new();
+        hm.insert("status", "success");
+        Json(hm)
     } else {
-        Ok(NamedFile::open(path).ok())
+        let mut hm = HashMap::new();
+        hm.insert("status", "fail");
+        Json(hm)
     }
 }
 
@@ -114,5 +97,5 @@ fn main() {
     lazy_static::initialize(&RAVEN_DOCS_PATH);
 
     // Mount & go
-    rocket::ignite().mount("/", routes![pull, files]).launch();
+    rocket::ignite().mount("/", routes![pull]).launch();
 }
