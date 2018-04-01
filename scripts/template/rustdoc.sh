@@ -12,7 +12,7 @@ project=$1
 temp=$(mktemp -d)
 
 # Clone repo in tmp directory
-git clone "git@github.com:raven-os/$project.git" "$temp"
+git clone "https://github.com/raven-os/$project.git" "$temp"
 
 cd "$temp"
 
