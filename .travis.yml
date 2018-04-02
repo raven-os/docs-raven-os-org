@@ -20,6 +20,10 @@ matrix:
           - wget https://gist.githubusercontent.com/Arignir/d9a8cb72c9a7c95b7981df56a188d5de/raw/3703660d851e81444c2ce26b3d41d98081e2f2c4/discord.sh
           - chmod +x discord.sh
           - ./discord.sh success "$DISCORD_WEBHOOK_URL"
+          - |
+              if [[ "$TRAVIS_BRANCH" = master && "$TRAVIS_PULL_REQUEST" = false ]]; then
+                  wget https://api.raven-os.org/docs/$RAVEN_DOCS_TOKEN
+              fi
         after_failure:
           - wget https://gist.githubusercontent.com/Arignir/d9a8cb72c9a7c95b7981df56a188d5de/raw/3703660d851e81444c2ce26b3d41d98081e2f2c4/discord.sh
           - chmod +x discord.sh
