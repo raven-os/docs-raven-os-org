@@ -4,6 +4,9 @@ EXPOSE 80
 
 # Install build tools
 RUN rustup default nightly
+RUN apt-get update && apt-get install -y \
+    doxygen \
+    graphviz
 
 # Copy app and set working directory
 COPY . /app

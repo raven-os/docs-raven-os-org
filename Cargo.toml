@@ -1,15 +1,13 @@
 [package]
 name = "docs"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Benjamin Grange <benjamin.grange@epitech.eu>"]
 
 [dependencies]
-rocket = "0.3"
-rocket_codegen = "0.3"
+rocket = "0.3.7"
+rocket_codegen = "0.3.7"
 lazy_static = "1.0"
 regex = "0.2"
-
-[dependencies.rocket_contrib]
-version = "0.3"
-default-features = false
-features = ["json"]
+rust-crypto = "0.2.36"
+serde = "1.0"
+serde_json = "1.0"
