@@ -21,10 +21,10 @@
 #![plugin(rocket_codegen)]
 
 extern crate crypto;
-extern crate rocket;
 #[macro_use]
 extern crate lazy_static;
 extern crate regex;
+extern crate rocket;
 extern crate serde_json as json;
 
 pub mod github;
