@@ -10,6 +10,7 @@ fi
 project=$1
 branch=$2
 
+cargo update
 cargo doc --all --no-deps --release
 cat > "target/doc/index.html" << EOF
 <html>
