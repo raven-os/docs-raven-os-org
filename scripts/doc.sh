@@ -26,7 +26,7 @@ cd "$tmp"
 if [[ -f "Cargo.toml" ]]; then
 	echo "Rust project detected"
 	"$old_path/scripts/rustdoc.sh" "$project" "$branch"
-elif [[ -f "doc/Doxyfile" ]]; then
+elif [[ -f "Doxyfile" ]]; then
 	echo "C/C++ project detected"
 	"$old_path/scripts/doxygen.sh" "$project" "$branch"
 else

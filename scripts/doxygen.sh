@@ -10,10 +10,10 @@ fi
 project=$1
 branch=$2
 
-cd "doc"
-
 doxygen Doxyfile
 
 mkdir -p "$RAVEN_DOCS_PATH/$project"
 rm -rf "$RAVEN_DOCS_PATH/$project/$branch"
-cp -r "$temp/doc/html" "$RAVEN_DOCS_PATH/$project/$branch"
+cp -r ./html "$RAVEN_DOCS_PATH/$project/$branch"
+
+echo "Doc is in" "$RAVEN_DOCS_PATH/$project/$branch"
