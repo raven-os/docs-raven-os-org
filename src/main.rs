@@ -77,7 +77,8 @@ fn delete_event(data: json::Value) -> ApiResult {
     if let (Some(Value::String(repo)), Some(Value::String(ref_type)), Some(Value::String(branch))) =
         (repository, ref_type, branch)
     {
-        if REGEX_IDENTIFIER_NAME.is_match(repo) && REGEX_IDENTIFIER_NAME.is_match(branch)
+        if REGEX_IDENTIFIER_NAME.is_match(repo)
+            && REGEX_IDENTIFIER_NAME.is_match(branch)
             && ref_type == "branch"
         {
             println!("Removing doc for {}:{}", repo, branch);
@@ -98,7 +99,8 @@ fn push_event(data: json::Value) -> ApiResult {
     use json::Value;
 
     let repository = data.get("repository").and_then(|x| x.get("name"));
-    let owner = data.get("repository")
+    let owner = data
+        .get("repository")
         .and_then(|x| x.get("owner"))
         .and_then(|x| x.get("name"));
     let repo_ref = data.get("ref");
@@ -106,7 +108,8 @@ fn push_event(data: json::Value) -> ApiResult {
         (repository, owner, repo_ref)
     {
         if let Some(branch) = repo_ref.splitn(3, '/').nth(2) {
-            if REGEX_IDENTIFIER_NAME.is_match(repo) && REGEX_IDENTIFIER_NAME.is_match(owner)
+            if REGEX_IDENTIFIER_NAME.is_match(repo)
+                && REGEX_IDENTIFIER_NAME.is_match(owner)
                 && REGEX_IDENTIFIER_NAME.is_match(branch)
             {
                 println!("Updating doc for {}/{}:{}", owner, repo, branch);
