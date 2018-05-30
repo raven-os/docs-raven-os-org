@@ -13,6 +13,7 @@ COPY . /app
 WORKDIR /app
 
 # Compile
+RUN cargo update
 RUN cargo build --release
 
 # Built docs will go there
