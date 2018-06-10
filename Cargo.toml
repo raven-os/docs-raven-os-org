@@ -1,11 +1,12 @@
 [package]
-name = "docs"
-version = "0.2.0"
+name = "docs-raven-os-org"
+version = "0.3.0"
 authors = ["Benjamin Grange <benjamin.grange@epitech.eu>"]
 
 [dependencies]
 rocket = "0.3.7"
 rocket_codegen = "0.3.7"
+rocket_contrib = { version = "0.3.7", default-features = false, features = [ "handlebars_templates" ]}
 lazy_static = "1.0"
 regex = "0.2"
 rust-crypto = "0.2.36"
