@@ -3,6 +3,5 @@ Dockerfile
 .gitignore
 README.md
 
-Cargo.lock
 /target
 **/*.rs.bk

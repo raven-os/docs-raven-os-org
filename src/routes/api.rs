@@ -2,18 +2,16 @@ use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
 
-use json;
 use rocket::response::status::{Accepted, BadRequest};
+use serde_json::Value;
 
-use github::{GitHubEvent, GitHubPayload};
-use {RAVEN_DOCS_PATH, REGEX_IDENTIFIER_NAME};
+use crate::github::{GitHubEvent, GitHubPayload};
+use crate::{RAVEN_DOCS_PATH, REGEX_IDENTIFIER_NAME};
 
 type ApiResult = Result<Accepted<()>, BadRequest<()>>;
 
 /// Handles the delete event: removes the documentation folder for the deleted branch.
-fn delete_event(data: json::Value) -> ApiResult {
-    use json::Value;
-
+fn delete_event(data: Value) -> ApiResult {
     let repository = data.get("repository").and_then(|x| x.get("name"));
     let ref_type = data.get("ref_type");
     let branch = data.get("ref");
@@ -38,9 +36,7 @@ fn delete_event(data: json::Value) -> ApiResult {
 }
 
 /// Handles the push event: updates the documentation.
-fn push_event(data: json::Value) -> ApiResult {
-    use json::Value;
-
+fn push_event(data: Value) -> ApiResult {
     let repository = data.get("repository").and_then(|x| x.get("name"));
     let owner = data
         .get("repository")
@@ -73,7 +69,7 @@ fn push_event(data: json::Value) -> ApiResult {
 /// Pulls and updates the given project
 #[post("/github", data = "<payload>")]
 fn github_webhook(event: Option<GitHubEvent>, payload: GitHubPayload) -> ApiResult {
-    if let Ok(data) = json::from_str::<json::Value>(&payload.0) {
+    if let Ok(data) = serde_json::from_str::<Value>(&payload.0) {
         match event {
             Some(GitHubEvent::Push) => push_event(data),
             Some(GitHubEvent::Delete) => delete_event(data),

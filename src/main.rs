@@ -1,41 +1,15 @@
-// Rustc
-#![warn(trivial_casts)]
-#![warn(trivial_numeric_casts)]
-#![warn(unused_extern_crates)]
-#![warn(unused_import_braces)]
-#![warn(unused_qualifications)]
-// Clippy
-#![cfg_attr(feature = "cargo-clippy", warn(fallible_impl_from))]
-#![cfg_attr(feature = "cargo-clippy", warn(int_plus_one))]
-#![cfg_attr(feature = "cargo-clippy", warn(mem_forget))]
-#![cfg_attr(feature = "cargo-clippy", warn(mut_mut))]
-#![cfg_attr(feature = "cargo-clippy", warn(mutex_integer))]
-#![cfg_attr(feature = "cargo-clippy", warn(pub_enum_variant_names))]
-#![cfg_attr(feature = "cargo-clippy", warn(range_plus_one))]
-#![cfg_attr(feature = "cargo-clippy", warn(used_underscore_binding))]
-#![cfg_attr(feature = "cargo-clippy", warn(wrong_pub_self_convention))]
-#![cfg_attr(feature = "cargo-clippy", allow(needless_pass_by_value))]
 // Features
 #![feature(plugin)]
 #![feature(custom_derive)]
 #![plugin(rocket_codegen)]
 
-extern crate crypto;
-#[macro_use]
-extern crate lazy_static;
-extern crate regex;
-extern crate rocket;
-extern crate rocket_contrib;
-#[macro_use]
-extern crate serde_json as json;
-
-pub mod backend;
-pub mod frontend;
 pub mod github;
+pub mod routes;
 
 use std::env;
 use std::process;
 
+use lazy_static::lazy_static;
 use regex::Regex;
 use rocket_contrib::Template;
 
@@ -74,10 +48,15 @@ fn main() {
     // Mount & go
     rocket::ignite()
         .attach(Template::fairing())
-        .mount("/api/", routes![backend::github_webhook,])
+        .mount("/api/", routes![routes::api::github_webhook,])
         .mount(
             "/",
-            routes![frontend::projects, frontend::branches, frontend::content,],
+            routes![
+                routes::front::projects,
+                routes::front::branches,
+                routes::front::content_path,
+                routes::front::content_index,
+            ],
         )
         .launch();
 }
