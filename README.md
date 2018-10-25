@@ -1,4 +1,4 @@
-# Raven-OS's Documentaton
+# Raven-OS's Documentaton [![Build Status](https://travis-ci.org/raven-os/docs-raven-os-org.svg?branch=master)](https://travis-ci.org/raven-os/docs-raven-os-org)
 
 Hosts and updates Raven-OS's documentation.
 
