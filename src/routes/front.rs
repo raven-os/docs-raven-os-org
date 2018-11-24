@@ -72,8 +72,8 @@ fn projects() -> Template {
     Template::render(
         "project_listing",
         json!({
-        "projects_len": projects.len(),
-        "projects": projects,
-    }),
+            "projects_len": projects.len(),
+            "projects": projects,
+        }),
     )
 }
