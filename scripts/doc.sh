@@ -3,7 +3,7 @@
 set -e
 
 if [[ $# -ne 3 ]]; then
-	echo "Usage: $0 <project> <branch>"
+	echo "Usage: $0 <owner> <project> <branch>"
 	exit 1
 fi
 
@@ -12,30 +12,32 @@ if [[ -z $RAVEN_DOCS_PATH ]]; then
 	exit 1
 fi
 
-owner=$1
-project=$2
-branch=$3
+declare owner=$1
+declare project=$2
+declare branch=$3
 
-tmp=$(mktemp -d)
+declare tmp=$(mktemp -d)
+declare old_path=$(pwd)
 
-old_path=$(pwd)
 git clone -b "$branch" "https://github.com/$owner/$project.git" "$tmp"
-cd "$tmp"
+pushd "$tmp"
+	# Check the repository language and use the corresponding script
+	if [[ -f "Cargo.toml" ]]; then
+		echo "Rust (Rustdoc) project detected"
+		"$old_path/scripts/rustdoc.sh" "$project" "$branch"
+	elif [[ -f "Doxyfile" ]]; then
+		echo "C/C++ (Doxygen) project detected"
+		"$old_path/scripts/doxygen.sh" "$project" "$branch"
+	elif [[ -f "docs/source/index.rst" ]]; then
+		echo "Python (Sphinx) project detected"
+		"$old_path/scripts/sphinx.sh" "$project" "$branch"
+	else
+		echo "Couldn't determine the project's language"
+		exit 0
+	fi
 
-# Check the repository language and use the corresponding script
-if [[ -f "Cargo.toml" ]]; then
-	echo "Rust project detected"
-	"$old_path/scripts/rustdoc.sh" "$project" "$branch"
-elif [[ -f "Doxyfile" ]]; then
-	echo "C/C++ project detected"
-	"$old_path/scripts/doxygen.sh" "$project" "$branch"
-else
-	echo "Couldn't determine the project's language"
-	exit 0
-fi
-
-echo "Finished building doc of \"$owner/$project:$branch\""
+	echo "Finished building doc of \"$owner/$project:$branch\""
+popd
 
 # Remove temp files
-cd "$old_path"
 rm -rf "$tmp"

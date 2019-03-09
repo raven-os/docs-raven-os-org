@@ -1,16 +1,17 @@
 use std::fs;
 use std::path::PathBuf;
 
+use rocket::get;
 use rocket::response::NamedFile;
 
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 use serde_json::json;
 
 use crate::{RAVEN_DOCS_PATH, REGEX_IDENTIFIER_NAME};
 
 /// Static file serving for a documentation
 #[get("/<project>/<branch>/<path..>")]
-fn content_path(project: String, branch: String, path: PathBuf) -> Option<NamedFile> {
+pub fn content_path(project: String, branch: String, path: PathBuf) -> Option<NamedFile> {
     if REGEX_IDENTIFIER_NAME.is_match(&project) && REGEX_IDENTIFIER_NAME.is_match(&branch) {
         let mut path = PathBuf::from(&*RAVEN_DOCS_PATH)
             .join(&project)
@@ -27,13 +28,13 @@ fn content_path(project: String, branch: String, path: PathBuf) -> Option<NamedF
 
 /// Static file serving for a documentation
 #[get("/<project>/<branch>")]
-fn content_index(project: String, branch: String) -> Option<NamedFile> {
+pub fn content_index(project: String, branch: String) -> Option<NamedFile> {
     content_path(project, branch, PathBuf::new())
 }
 
 /// Shows all available branches
 #[get("/<project>")]
-fn branches(project: String) -> Template {
+pub fn branches(project: String) -> Template {
     let mut branches = Vec::new();
     if REGEX_IDENTIFIER_NAME.is_match(&project) {
         let path = PathBuf::from(&*RAVEN_DOCS_PATH).join(&project);
@@ -58,7 +59,7 @@ fn branches(project: String) -> Template {
 
 /// Shows all available projects
 #[get("/")]
-fn projects() -> Template {
+pub fn projects() -> Template {
     let path = PathBuf::from(&*RAVEN_DOCS_PATH);
     let mut projects = Vec::new();
 

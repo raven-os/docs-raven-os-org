@@ -1,7 +1,4 @@
-// Features
-#![feature(plugin)]
-#![feature(custom_derive)]
-#![plugin(rocket_codegen)]
+#![feature(proc_macro_hygiene, decl_macro)]
 
 pub mod github;
 pub mod routes;
@@ -11,7 +8,7 @@ use std::process;
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use rocket_contrib::Template;
+use rocket_contrib::templates::Template;
 
 // The different environment variables we are using.
 //
@@ -48,10 +45,10 @@ fn main() {
     // Mount & go
     rocket::ignite()
         .attach(Template::fairing())
-        .mount("/api/", routes![routes::api::github_webhook,])
+        .mount("/api/", rocket::routes![routes::api::github_webhook,])
         .mount(
             "/",
-            routes![
+            rocket::routes![
                 routes::front::projects,
                 routes::front::branches,
                 routes::front::content_path,

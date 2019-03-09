@@ -8,7 +8,7 @@ use crypto::hmac::Hmac;
 use crypto::mac::Mac;
 use crypto::sha1::Sha1;
 
-use rocket::data::{self, FromData};
+use rocket::data::{self, FromDataSimple};
 use rocket::http::Status;
 use rocket::request::{self, FromRequest, Request};
 use rocket::{Data, Outcome};
@@ -48,7 +48,7 @@ impl<'r, 'a> FromRequest<'r, 'a> for GitHubEvent {
 #[derive(Clone, Eq, PartialEq, Hash, Debug, Default)]
 pub struct GitHubPayload(pub String);
 
-impl FromData for GitHubPayload {
+impl FromDataSimple for GitHubPayload {
     type Error = ();
 
     fn from_data(request: &Request, data: Data) -> data::Outcome<GitHubPayload, Self::Error> {

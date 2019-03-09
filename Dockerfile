@@ -6,6 +6,8 @@ EXPOSE 80
 RUN rustup default nightly
 RUN apt-get update && apt-get install -y \
     doxygen \
+    python3-pip \
+    python3-sphinx \
     graphviz
 
 # Copy app and set working directory

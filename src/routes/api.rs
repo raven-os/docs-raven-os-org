@@ -2,6 +2,7 @@ use std::fs;
 use std::path::PathBuf;
 use std::process::Command;
 
+use rocket::post;
 use rocket::response::status::{Accepted, BadRequest};
 use serde_json::Value;
 
@@ -27,9 +28,8 @@ fn delete_event(data: Value) -> ApiResult {
             path.push(repo);
             path.push(branch);
 
-            return fs::remove_dir_all(path)
-                .map(|_| Accepted::<()>(None))
-                .map_err(|_| BadRequest::<()>(None));
+            let _ = fs::remove_dir_all(path); // Ignore errors
+            return Ok(Accepted::<()>(None));
         }
     }
     Err(BadRequest::<()>(None))
@@ -68,7 +68,7 @@ fn push_event(data: Value) -> ApiResult {
 
 /// Pulls and updates the given project
 #[post("/github", data = "<payload>")]
-fn github_webhook(event: Option<GitHubEvent>, payload: GitHubPayload) -> ApiResult {
+pub fn github_webhook(event: Option<GitHubEvent>, payload: GitHubPayload) -> ApiResult {
     if let Ok(data) = serde_json::from_str::<Value>(&payload.0) {
         match event {
             Some(GitHubEvent::Push) => push_event(data),
