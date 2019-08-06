@@ -9,6 +9,7 @@ use std::process;
 use lazy_static::lazy_static;
 use regex::Regex;
 use rocket_contrib::templates::Template;
+use rocket_contrib::serve::StaticFiles;
 
 // The different environment variables we are using.
 //
@@ -46,6 +47,8 @@ fn main() {
     rocket::ignite()
         .attach(Template::fairing())
         .mount("/api/", rocket::routes![routes::api::github_webhook,])
+        .mount("/css", StaticFiles::from("front/static/css"))
+        .mount("/img", StaticFiles::from("front/static/img"))
         .mount(
             "/",
             rocket::routes![
