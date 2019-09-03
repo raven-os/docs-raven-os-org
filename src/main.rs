@@ -3,6 +3,8 @@
 pub mod github;
 pub mod routes;
 
+mod front;
+
 use std::env;
 use std::process;
 
@@ -45,10 +47,10 @@ fn main() {
 
     // Mount & go
     rocket::ignite()
-        .attach(Template::fairing())
         .mount("/api/", rocket::routes![routes::api::github_webhook,])
-        .mount("/css", StaticFiles::from("front/static/css"))
-        .mount("/img", StaticFiles::from("front/static/img"))
+        .mount("/css", StaticFiles::from("front/css"))
+        .mount("/img", StaticFiles::from("front/img"))
+        .mount("/js", StaticFiles::from("front/js"))
         .mount(
             "/",
             rocket::routes![
@@ -58,5 +60,10 @@ fn main() {
                 routes::front::content_index,
             ],
         )
+        .attach(Template::custom(|engines| {
+            engines
+                .handlebars
+                .register_helper("plural", Box::new(front::hb::plural));
+          }))
         .launch();
 }
