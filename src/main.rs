@@ -10,8 +10,8 @@ use std::process;
 
 use lazy_static::lazy_static;
 use regex::Regex;
-use rocket_contrib::templates::Template;
 use rocket_contrib::serve::StaticFiles;
+use rocket_contrib::templates::Template;
 
 // The different environment variables we are using.
 //
@@ -64,6 +64,6 @@ fn main() {
             engines
                 .handlebars
                 .register_helper("plural", Box::new(front::hb::plural));
-          }))
+        }))
         .launch();
 }
