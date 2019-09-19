@@ -28,7 +28,7 @@
         <div class="row">
           <div class="col" align="center">
             <h1 class="display-4">
-              <a href="/"><b>Branches for {{project}}</b></a>
+              <a href="/"><b><span class="text-dark">Branches for</span> {{project}}</b></a>
             </h1>
             <h5>
               <kbd><b>{{branches_len}}</b></kbd> {{plural "branch" "branches" branches_len}} available
@@ -57,7 +57,6 @@
             </table>
           </div>
         </div>
-
       </div>
     </div>
 
@@ -65,11 +64,4 @@
       {{> includes/footer}}
     </footer>
   </div>
-
-  {{!-- <h2>Raven-OS's - Branches for {{project}} ({{branches_len}} available):</h2>
-  <ul>
-    {{#each branches}}
-    <li><a href="/p/{{../project}}/{{this}}/">{{this}}</a></li>
-    {{/each}}
-  </ul> --}}
 </body>

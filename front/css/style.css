@@ -63,7 +63,7 @@ Custom rules
 }
 
 .text-dark {
-  color: var(--dark) !important;
+  color: var(--primary-dark) !important;
 }
 
 .text-accent {
