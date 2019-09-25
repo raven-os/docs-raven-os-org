@@ -10,7 +10,7 @@ use serde_json::json;
 use crate::{RAVEN_DOCS_PATH, REGEX_IDENTIFIER_NAME};
 
 /// Static file serving for a documentation
-#[get("/<project>/<branch>/<path..>")]
+#[get("/p/<project>/<branch>/<path..>")]
 pub fn content_path(project: String, branch: String, path: PathBuf) -> Option<NamedFile> {
     if REGEX_IDENTIFIER_NAME.is_match(&project) && REGEX_IDENTIFIER_NAME.is_match(&branch) {
         let mut path = PathBuf::from(&*RAVEN_DOCS_PATH)
@@ -27,13 +27,13 @@ pub fn content_path(project: String, branch: String, path: PathBuf) -> Option<Na
 }
 
 /// Static file serving for a documentation
-#[get("/<project>/<branch>")]
+#[get("/p/<project>/<branch>")]
 pub fn content_index(project: String, branch: String) -> Option<NamedFile> {
     content_path(project, branch, PathBuf::new())
 }
 
 /// Shows all available branches
-#[get("/<project>")]
+#[get("/p/<project>")]
 pub fn branches(project: String) -> Template {
     let mut branches = Vec::new();
     if REGEX_IDENTIFIER_NAME.is_match(&project) {
