@@ -10,6 +10,8 @@ fi
 declare project=$1
 declare branch=$2
 
+pip3 install --user -r requirements.txt
+
 pushd "docs/"
 	pip3 install --user -r requirements.txt
 	sphinx-apidoc -f --separate -o source/ ..

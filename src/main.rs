@@ -45,7 +45,7 @@ fn main() {
     lazy_static::initialize(&RAVEN_DOCS_PATH);
     lazy_static::initialize(&REGEX_IDENTIFIER_NAME);
 
-    // Mount & go
+    // Mount & go.
     rocket::ignite()
         .mount("/api/", rocket::routes![routes::api::github_webhook,])
         .mount("/css", StaticFiles::from("front/css"))
